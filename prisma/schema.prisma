@@ -1,0 +1,51 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id             String    @id @default(uuid())
+  fullName       String
+  email          String    @unique
+  password       String
+  emailVerified  Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+model Problem {
+  id String @id @default(uuid())
+  title       String 
+  difficulty  Difficulty @default(Easy) 
+  topic String
+  companies String[]
+  metaData  MetaData?
+}
+
+model MetaData {
+  id String @id @default(uuid())
+  leetcodeUrl String
+  description String
+  constraints String[]
+  problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  problemId String  @unique
+  testCases TestCases[]
+}
+
+model TestCases{
+  id String @id @default(uuid())
+  input String 
+  output String
+  explanation String
+  metaData MetaData @relation(fields: [metaDataId], references: [id],onDelete: Cascade)
+  metaDataId String 
+}
+
+enum Difficulty {
+  Easy
+  Medium
+  Hard
+}
