@@ -18,6 +18,7 @@ model User {
 
 model Problem {
   id String @id @default(uuid())
+  slug String @unique 
   title       String 
   difficulty  Difficulty @default(Easy) 
   topic String

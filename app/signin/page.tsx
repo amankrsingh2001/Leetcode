@@ -28,7 +28,7 @@ export default function SignInPage() {
         }
 
         if (result?.ok) {
-        window.location.href = "/dashboard";
+        window.location.href = "/problems";
         }
 
     } catch (err) {

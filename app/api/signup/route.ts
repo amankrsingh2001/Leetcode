@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { saltAndHashPassword } from "@/app/utils/password";
 import { createUser } from "@/app/utils/zod";
 
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();
@@ -25,21 +26,30 @@ export async function POST(req: Request) {
         password:hashedPassword
       }
     })
+    if(!user?.id){
+      return NextResponse.json({
+        error:"Failed to create user"
+        
+      },{status:402})
+    }
 
     return NextResponse.json({
       success: true,
 
     });
-  } catch (error: any) {
+  } catch (error:unknown ) {
     console.log(error);
+    const err = error as Record<string, unknown>;
 
-    // Handle duplicate email error
-    if (error.code === "P2002" && error.meta?.target?.includes("email")) {
-      return NextResponse.json(
+    if(err && err.code === "p2002" && typeof error ==="object" && err.meta !== null && Array.isArray((err.meta as Record<string, unknown>).target) && ((err.meta as Record<string, unknown>).target as string[]).includes('email'))
+{
+          return NextResponse.json(
         { error: "Email already exists" },
         { status: 409 },
       );
-    }
+
+}
+    
 
     return NextResponse.json(
       { error: "Internal server error" },

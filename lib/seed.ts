@@ -1,10 +1,11 @@
 import { prisma } from "@/lib/prisma";
 import { Difficulty, Prisma } from "@prisma/client";
+import { title } from "process";
 
+import slugify from "slugify"
 
-
-
-const initData: Prisma.ProblemCreateInput[] = [
+type SeedProblem = Omit<Prisma.ProblemCreateInput, "slug">;
+const initData: SeedProblem[] = [
   {
     title: "Two Sum",
     difficulty: "Easy",
@@ -1460,14 +1461,20 @@ const initData: Prisma.ProblemCreateInput[] = [
 
   
 ]
-const seedDb = async (initData: Prisma.ProblemCreateInput[]) => {
+const seedDb = async (initData: SeedProblem[]) => {
   try {
     await prisma.problem.deleteMany();
 
     await Promise.all(
       initData.map((problem) =>
         prisma.problem.create({
-          data: problem,
+          data: {
+            ...problem,
+            slug : slugify(problem.title,{
+                lower:true,
+                strict:true
+            })
+          },
         })
       )
     );

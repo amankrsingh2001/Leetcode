@@ -1,9 +1,12 @@
 "use client";
 import { api } from "@/lib/api";
-import { ChangeEventHandler, useEffect, useState } from "react";
-import type { Problem } from "@prisma/client";
+import { useEffect, useState } from "react";
 import LoadingSkeleton from "@/app/component/LoadingSkeleton";
 import NoProblems from "@/app/component/ui/NoProblem";
+import { useRouter } from 'next/navigation'
+import { Problem } from "@prisma/client";
+import { useSocket } from "@/app/hook/useSocket";
+import axios, { AxiosError } from "axios";
 
 
 
@@ -26,8 +29,6 @@ const companies = [
 export default function Problems() {
 
 
- 
-
   const [status, setStatus] = useState("Solved");
   const [problemList, setProblemList] = useState<Problem[]>([]);
   const [allProblemList, setAllProblemList] = useState<Problem[]>([]);
@@ -38,29 +39,38 @@ export default function Problems() {
   const [selectedCompanies, setSelectedCompanies] = useState<string[]>([]);
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
 
-  const [loading, setLoading] = useState<Boolean>(true)
-  const [error, setError] = useState<Boolean>(false)
+  const [loading, setLoading] = useState<boolean>(true)
+  const [error, setError] = useState<boolean>(false)
+
+  const router = useRouter();
+
 
   useEffect(() => {
-    setLoading(true);
-    try {
+  
+
       const getProblems = async () => {
-      const { data } = await api.get("/problems");
+      setLoading(true);
+      try{
+        const { data } = await api.get("/problems");
       if(data?.length===0){
         setError(true);
       }
       setProblemList(data); // this state will be used to update the data and apply the filter logics
       setAllProblemList(data); // this will be set up for first time and no further mutated
-      const topic = [...new Set(data.flatMap((d: any) => d.topic))] as string[];
+      const topic = [...new Set(data.flatMap((d:Problem) => d.topic))] as string[];
       setTopics(topic);
-    };
-
-    getProblems();  
-    } catch (error) {
-      setError(true);
-    }finally{
-      setLoading(false)
+      }catch(error){
+        if(axios.isAxiosError(error)){
+          const serverMessage = error.response?.data?.message || error.response?.data?.error
+          console.log("Axios Error message:", serverMessage || error.message)
+        }else{
+          console.log("unexpected error",error)
+        }
+      }finally{
+        setLoading(false)
+      }
     }
+    getProblems();  
     
   }, []);
 
@@ -123,6 +133,10 @@ export default function Problems() {
     // Navigate the page to company url
   };
 
+  const problemDescriptionHandler = async(e:React.MouseEvent<HTMLTableRowElement> ,problem:Problem) =>{
+      router.push(`/problems/${problem?.slug}/description`)
+  }
+
   {
     return loading ? <LoadingSkeleton/> :  <div className="min-h-screen bg-[#1a1a1a] text-white flex gap-4 px-6 py-6">
       {/* Sidebar */}
@@ -138,7 +152,7 @@ export default function Problems() {
                 className="flex items-center justify-between text-sm"
               >
                 <span className={difficultyColor[d]}>{d}</span>
-                <span className="text-white/30 text-xs">0 / 10</span>
+                <span className="text-white/30 text-xs">0/{allProblemList.filter((problem)=> problem.difficulty === d).length}</span>
               </div>
             ))}
           </div>
@@ -193,15 +207,16 @@ export default function Problems() {
             <tbody>
               {problemList.map((p) => (
                 <tr
+                 onClick={(e) => problemDescriptionHandler(e, p)}
                   key={p.id}
                   className="border-t border-white/5 hover:bg-white/5 transition-colors cursor-pointer"
                 >
                   <td className="px-5 py-3.5">
-                    {p.solved ? (
+                    {/* {p.solved ? (
                       <span className="text-green-400 text-xs">✓</span>
                     ) : (
                       <span className="w-3 h-3 rounded-full border border-white/20 inline-block" />
-                    )}
+                    )} */} solved
                   </td>
                   <td className="px-5 py-3.5 font-medium hover:text-[#ffa116] transition-colors">
                     {p.title}
@@ -218,7 +233,8 @@ export default function Problems() {
               ))}
             </tbody>
           </table>
-        </div></>
+        </div>
+        </>
             }
         
       </div>
