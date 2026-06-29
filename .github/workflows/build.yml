@@ -9,7 +9,7 @@ on:
 jobs:
   build:
     name: Lint, Typecheck, and Build
-    runs_on: ununtu-latest
+    runs-on: ununtu-latest
 
     steps:
       - name: Checkout repository
