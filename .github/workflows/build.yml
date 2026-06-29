@@ -8,15 +8,10 @@ on:
     branches:
       - main
 
-
 jobs:
   build:
     name: Lint, Typecheck, and Build
     runs-on: ubuntu-latest
-    
-    defaults:
-      run:
-        working-directory: cms
 
     steps:
       - name: Checkout repository
@@ -32,7 +27,6 @@ jobs:
         with:
           node-version: '24'
 
-
       - name: Install dependencies 
         run: pnpm install --frozen-lockfile
 
@@ -40,8 +34,7 @@ jobs:
         run: pnpm run lint        
 
       - name: check Typescript Compilation
-        run : npx tsc --noEmit
+        run: npx tsc --noEmit
       
-
       - name: Verify Production Build
         run: pnpm run build
