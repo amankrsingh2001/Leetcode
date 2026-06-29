@@ -12,7 +12,7 @@ on:
 jobs:
   build:
     name: Lint, Typecheck, and Build
-    runs-on: ununtu-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository

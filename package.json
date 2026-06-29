@@ -8,7 +8,8 @@
     "dev": " pnpm docker:up && next dev; pnpm docker:down",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:generate":"npx prisma generate "
   },
   "dependencies": {
     "@base-ui-components/react": "1.0.0-rc.0",
