@@ -27,14 +27,16 @@ jobs:
         with:
           node-version: '24'
 
+      # 💡 The --filter . flag tells pnpm to target only the root package configuration
       - name: Install dependencies 
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --filter .
 
+      # 💡 Adding the filter flags here guarantees pnpm targets the local scripts directly
       - name: Check code linting
-        run: pnpm run lint        
+        run: pnpm --filter . run lint        
 
       - name: check Typescript Compilation
         run: npx tsc --noEmit
       
       - name: Verify Production Build
-        run: pnpm run build
+        run: pnpm --filter . run build
