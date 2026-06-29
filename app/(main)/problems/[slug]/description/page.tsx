@@ -1,8 +1,7 @@
 "use server"
 
 import { prisma } from "@/lib/prisma";
-import { includes } from 'zod';
-import ReactMarkdown from "react-markdown";
+import { Problem, TestCases } from "@prisma/client";
 
 
 
@@ -22,7 +21,7 @@ export default async function Description({params}:{ params: Promise<{ slug: str
             }
     })
     if(problemDetails === null){
-        return <div>Not found nay description for this question</div>
+        return <div>Not found any description for this question</div>
     }
   const topics = problemDetails?.topic.split("&");
   return (
@@ -38,7 +37,7 @@ export default async function Description({params}:{ params: Promise<{ slug: str
         {/* Meta row */}
         <div className="flex items-center gap-2 flex-wrap">
           {
-            topics.map((topic)=>{
+            topics.map((topic:string)=>{
               return  <span key={problemDetails?.id} className="text-xs font-semibold px-2 py-0.5 rounded-full bg-green-500/10 text-green-500 border border-green-500/20">
                         {topic}
                     </span> 
@@ -66,7 +65,7 @@ export default async function Description({params}:{ params: Promise<{ slug: str
       {/* Examples */}
         <div className="flex flex-col gap-4">
         {
-            problemDetails?.metaData?.testCases.map((ex,id) => (
+            problemDetails?.metaData?.testCases.map((ex:TestCases,id:number) => (
           <div key={ex.id} className="flex flex-col gap-2">
             <p className="font-semibold text-foreground">Example {id+1}</p>
             <div className="rounded-lg bg-muted border border-border px-4 py-3 font-mono text-xs leading-6 text-foreground">
@@ -93,7 +92,7 @@ export default async function Description({params}:{ params: Promise<{ slug: str
         <p className="font-semibold text-foreground">Constraints</p>
         <ul className="flex flex-col gap-1 pl-4 list-disc marker:text-muted-foreground text-xs font-mono text-foreground leading-6">
           {
-            problemDetails?.metaData?.constraints.map((constraint)=>{
+            problemDetails?.metaData?.constraints.map((constraint:string)=>{
                 return <li key={problemDetails?.id}>{constraint}</li>
             })
           }
