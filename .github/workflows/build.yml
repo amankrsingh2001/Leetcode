@@ -13,6 +13,10 @@ jobs:
   build:
     name: Lint, Typecheck, and Build
     runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: cms
 
     steps:
       - name: Checkout repository
