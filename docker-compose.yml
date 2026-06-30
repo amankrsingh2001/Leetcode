@@ -1,5 +1,19 @@
 services: 
 
+  app:
+    image: leetcode
+    ports:
+      - "3000:3000"
+
+    depends_on:
+      - redis
+      - postgres-primary
+
+    environment: 
+      DATABASE_URL: postgresql://root:root@postgres-primary:5432/leetcodeclone
+      REDIS_URL: redis://redis:6379
+
+
   redis:
       image: redis:7.4.7
       container_name: leetcodeClone-server

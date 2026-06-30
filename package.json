@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "docker:up": "docker compose up -d ",
-    "docker:down": "docker compose down",
+    "docker:up": "docker compose -f docker-compose.dev.yml up -d ",
+    "docker:down": "docker compose -f docker-compose.dev.yml down",
     "dev": " pnpm docker:up && next dev; pnpm docker:down",
     "build": "next build",
     "start": "next start",
