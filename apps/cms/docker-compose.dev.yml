@@ -1,0 +1,31 @@
+services:
+
+
+  redis:
+    image: redis:7.4.7
+    container_name: leetcode_server
+    restart: unless-stopped
+    ports:
+      - "6378:6379"
+
+    volumes:
+      - redis_data:/data
+
+
+  postgres-primary:
+    image: postgres:16
+    container_name: leetcode_primary
+    ports:
+      - "5432:5432"
+    environment:
+        POSTGRES_USER: root
+        POSTGRES_PASSWROD: root
+        POSTGRES_DB: leetcodeclone
+
+    restart: unless-stopped
+    volumes:
+      - postgres_primary_data:/var/lib/postgresql/data  
+
+volumes:
+  postgres_primary_data:
+  redis_data:
